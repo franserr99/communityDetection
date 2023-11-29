@@ -1,31 +1,39 @@
 import sys, gzip
+from IPython.display import SVG
 import pandas as pd
 import numpy as np
+import sknetwork as skn
+from sknetwork.clustering import Louvain, get_modularity
+from sknetwork.linalg import normalize
+from sknetwork.utils import get_membership
+from sknetwork.visualization import svg_graph, svg_bigraph
 import networkx as nx
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
-import community as community_louvain
 
 # Read in the data
-df = pd.read_csv('cisco+secure+workload+networks+of+computing+hosts\Cisco_22_networks\dir_20_graphs\dir_day1\out1_1.txt.gz', compression='gzip', sep="\t", header=None, names=["src", "dst", "weight"], dtype={"src": str, "dst": str, "weight": str})
+df = pd.read_csv('communityDetection/Cisco_22_networks/dir_20_graphs/dir_day1/out1_1.txt.gz', compression='gzip', sep="\t", header=None, names=["graph","src", "dst", "weight"], dtype={"graph": str, "src": str, "dst": str, "weight": str})
 df.sort_index(inplace=True)
 
-# Replace final column with computed weight
+# Set weight of graph
+# df["weight"] = df["weight"].map(lambda x: len(x.split(","))) # Count the number of communications between the two hosts
 
-df["weight"] = df["weight"].map(lambda x: len(x.split(","))) # Count the number of communications between the two hosts
+# Other weight options
+df["weight"] = df["weight"].map(lambda x: sum([int(y.split("-")[1]) for y in x.split(",")])) # Count total number of packets sent
 
-# Convert to networkx graph
-G = nx.from_pandas_edgelist(df, "src", "dst", ["weight"], create_using=nx.DiGraph())
 
-# Display the graph
-# nx.draw(G, with_labels=True)
+# Create adjacency list for graph 1
+df_g1 = df.query("graph == 'g1' ")
 
-# Louvain community detection
-partition = nx.community.louvain_communities(G)
-pos = nx.spring_layout(G)
-# color the nodes according to their partition
-cmap = cm.get_cmap('viridis', max(partition.values()) + 1)
-nx.draw_networkx_nodes(G, pos, partition.keys(), node_size=40,
-                       cmap=cmap, node_color=list(partition.values()))
-nx.draw_networkx_edges(G, pos, alpha=0.5)
-plt.show()
+G = nx.from_pandas_edgelist(df_g1, 'src', 'dst', ['weight'], create_using=nx.DiGraph())
+print(G.adjacency_list())
+
+# Create the graph
+graph = skn.utils.edgelist2adjacency(df, directed=True, weights="weight", return_edge_list=False)
+adjacency = graph.adjacency
+position = graph.position
+
+# Create the graph
+louvain = Louvain()
+labels = louvain.fit_predict(adjacency)
+
+image = svg_graph(adjacency, position, labels=labels)
+SVG(image)

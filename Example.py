@@ -17,6 +17,10 @@ G = nx.from_pandas_edgelist(df, "src", "dst", edge_attr="weight", create_using=n
 #nx.draw(G, with_labels=True)
 #plt.show()
 
+# Supposed True Communities
+y = nx.community.louvain_communities(G) # Louvain community detection algorithm
+
+
 
 # Create a DeepWalk model
 deepwalk = DeepWalk(dimensions=2)
@@ -24,8 +28,7 @@ deepwalk.fit(G)
 
 embedding = deepwalk.get_embedding()
 
-
-plt.scatter(embedding[:,0], embedding[:,1])
+# plt.scatter(embedding[:,0], embedding[:,1])
 
 # Create a KMedoids model
 kmedoids = KMedoids(n_clusters=2, random_state=0).fit(embedding)

@@ -16,11 +16,13 @@ from gensim.models import Word2Vec
 import community
 
 # Read in the data from g1_1.csv
-df = pd.read_csv('communityDetection\graphs\g1_1.csv', sep="\t", header=None, names=["graph","src", "dst", "weight"], dtype={"graph": str, "src": int, "dst": int, "weight": str})
+df = pd.read_csv('graphs/g1_1.csv', sep="\t", header=None, names=["graph","src", "dst", "weight"], dtype={"graph": str, "src": int, "dst": int, "weight": str})
 df.sort_index(inplace=True)
 
 # Set weights of graph
 df["weight"] = df["weight"].map(lambda x: len(x.split(","))) # Count the number of communications between the two hosts
+
+# TODO: Check other weight options (e.g.  total number of packets, weighted sum with packet size, etc.)
 
 # Create a graph from the dataframe
 G = nx.from_pandas_edgelist(df, "src", "dst", edge_attr="weight", create_using=nx.Graph())
@@ -30,16 +32,15 @@ G = nx.from_pandas_edgelist(df, "src", "dst", edge_attr="weight", create_using=n
 # Supposed True Communities
 y = community.best_partition(G) # True Labels from Louvain Algorithm
 
-
-
-""" # Create a DeepWalk model
+ # Create a DeepWalk model
+"""
 deepwalk = DeepWalk(dimensions=2)
 deepwalk.fit(G)
 
 embedding = deepwalk.get_embedding()
 
 # plt.scatter(embedding[:,0], embedding[:,1])
- """
+"""
 
 # Create a StellarGraph model
 walk_length = 100
@@ -55,11 +56,19 @@ node_embeddings = (
 embedding = TSNE(n_components=2).fit_transform(node_embeddings)
 
 
+
 # Create a KMedoids model
-kmedoids = KMedoids(n_clusters=2, random_state=0).fit(embedding)
+kmedoids = KMedoids(n_clusters=4, random_state=0).fit(embedding)
 labels = kmedoids.labels_
 
-unique_labels = set(labels)
+# TODO: Check other clustering algorithms (e.g. Spectral Clustering, K-means, etc.)
+
+# Compute accuracy (I think...?)
+accuracy = accuracy_score([y[node] for node in range(len(y))], labels, normalize=True)
+
+
+# Display Clustering (Uncecessary)
+""" unique_labels = set(labels)
 colors = [
     plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))
 ]
@@ -86,4 +95,4 @@ plt.plot(
 )
 
 plt.title("KMedoids clustering. Medoids are represented in cyan.")
-plt.show()
+plt.show() """

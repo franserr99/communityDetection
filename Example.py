@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import networkx as nx
-from karateclub.node_embedding.neighbourhood.deepwalk import DeepWalk
+#from karateclub.node_embedding.neighbourhood.deepwalk import DeepWalk
 import matplotlib.pyplot as plt
 from sklearn_extra.cluster import KMedoids
 from sklearn.manifold import TSNE
@@ -13,7 +13,7 @@ from sklearn import preprocessing
 from stellargraph.data import BiasedRandomWalk
 from stellargraph import StellarGraph
 from gensim.models import Word2Vec
-import community
+# from networkx.algorithms import community
 
 # Read in the data from g1_1.csv
 df = pd.read_csv('graphs/g1_1.csv', sep="\t", header=None, names=["graph","src", "dst", "weight"], dtype={"graph": str, "src": int, "dst": int, "weight": str})
@@ -30,7 +30,7 @@ G = nx.from_pandas_edgelist(df, "src", "dst", edge_attr="weight", create_using=n
 #plt.show()
 
 # Supposed True Communities
-y = community.best_partition(G) # True Labels from Louvain Algorithm
+# y = community.louvain_communities(G) # True Labels from Louvain Algorithm
 
  # Create a DeepWalk model
 """
@@ -64,11 +64,11 @@ labels = kmedoids.labels_
 # TODO: Check other clustering algorithms (e.g. Spectral Clustering, K-means, etc.)
 
 # Compute accuracy (I think...?)
-accuracy = accuracy_score([y[node] for node in range(len(y))], labels, normalize=True)
+# accuracy = accuracy_score([y[node] for node in range(len(y))], labels, normalize=True)
 
 
 # Display Clustering (Uncecessary)
-""" unique_labels = set(labels)
+unique_labels = set(labels)
 colors = [
     plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))
 ]
@@ -95,4 +95,4 @@ plt.plot(
 )
 
 plt.title("KMedoids clustering. Medoids are represented in cyan.")
-plt.show() """
+plt.show() 

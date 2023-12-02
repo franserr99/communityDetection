@@ -15,6 +15,7 @@ from stellargraph import StellarGraph
 from gensim.models import Word2Vec
 import community
 from typing import TypedDict, Dict, List
+from sklearn.metrics import silhouette_score
 
 
 class ClusterMembership(TypedDict):
@@ -24,7 +25,7 @@ class ClusterMembership(TypedDict):
 # switch this to iterate all graphs for now keep to 1
 for i in range(1):
     cluster_membership: ClusterMembership = {}
-    for j in range(4):
+    for j in range(1):
         cluster_membership[j] = {}
         # Read in the data from g1_1.csv
         df = pd.read_csv(f'graphs/g{i+1}_{j+1}.csv', sep="\t", header=None, names=[
@@ -71,7 +72,7 @@ for i in range(1):
             model.wv.vectors
         )  # numpy.ndarray of size number of nodes times embeddings dimensionality
         embedding = TSNE(n_components=2).fit_transform(node_embeddings)
-
+        # TODO: Check other clustering algorithms (e.g. Spectral Clustering, K-means, etc.)
         # Create a KMedoids model
         kmedoids = KMedoids(n_clusters=4, random_state=0).fit(embedding)
         labels = kmedoids.labels_
@@ -81,14 +82,15 @@ for i in range(1):
             if cluster not in cluster_membership[j]:
                 cluster_membership[j][cluster] = []
             cluster_membership[j][cluster].append(nodeID)
-        # TODO: Check other clustering algorithms (e.g. Spectral Clustering, K-means, etc.)
 
-        # Compute accuracy (I think...?)
-        aligned_labels = [y[int(node_id)] for node_id in node_ids]
-        # [y[node] for node in range(len(y))]
-        accuracy = accuracy_score(aligned_labels, labels, normalize=True)
-        print(accuracy)
-    print(cluster_membership)
+        # # Compute accuracy (I think...?)
+        # aligned_labels = [y[int(node_id)] for node_id in node_ids]
+        # # [y[node] for node in range(len(y))]
+        # accuracy = accuracy_score(aligned_labels, labels, normalize=True)
+        sse = kmedoids.inertia_
+        print("Sum of Squared Errors:", sse)
+        score = silhouette_score(embedding, labels)
+        print("Silhouette score: ", score)
 
 
 # Display Clustering (Uncecessary)

@@ -25,76 +25,78 @@ class ClusterMembership(TypedDict):
 
 class WeightMethod(Enum):
     NUM_OF_COMM = "num_of_comm"
+    # TODO :add enums for ryans work +
+    #       their implementation in code or selection from file w it already computed
 
 
 class EmbeddingMethod(Enum):
     WEIGHTED_RANDOM = "weighted_random"
+    DEEP_WALK = "deep_walk"
 
 
-class ModelParamters(TypedDict):
+class ClusteringMethod(Enum):
+    KMEDOIDS = "kmedoids"
+    KMEANS = "kmeans"
+    SPECTRAL = "spectral"
+
+
+class ModelParameters(TypedDict):
     walk_length: int
-    num_of_random_walks: int
-    p: float
-    q: float
+    num_of_walks: int
     vec_size: int
     num_of_clusters: int
-    embedding_method: EmbeddingMethod
-    weight_method: WeightMethod
+    embedding: EmbeddingMethod
+    weight: WeightMethod
+    clustering: ClusteringMethod
 
 
 def main():
-    # hyper-paramters
-    walk_lengths = [100]
-    num_of_random_walks = []
-    num_of_clusters = []
-    embedding_methods = []
-    weight_methods = []
-
     # switch this to iterate all graphs for now keep to 1
     for i in range(1):
         cluster_membership: ClusterMembership = {}
         for j in range(1):
+            # hyper-paramters (tuning on a per data set basis (best parameters for each graph))
+            # we can use the ground truth model as a validation set for some selection of parameters we choose
+            # and find some way to get a general set of "best parameters" for the domain/data set
+            walk_lengths = [100]
+            num_of_random_walks = []
+            # starting with larger intervals we can narrow down (idk the scale of # of clusters)
+            num_of_clusters = [4, 8, 16, 20]
+            embedding_methods = [
+                EmbeddingMethod.WEIGHTED_RANDOM, EmbeddingMethod.DEEP_WALK]
+            weight_methods = [WeightMethod.NUM_OF_COMM]
+            # -1 -> 1 range for silhoutte score
+            max_score = -1
             for walk_length in walk_lengths:
                 for n_walk in num_of_random_walks:
                     for n_clusters in num_of_clusters:
-                        paramters = ModelParamters(walk_length=walk_length,
-                                                   num_of_clusters=n_clusters,
-                                                   num_of_random_walks=n_walk)
+                        paramters = ModelParameters(walk_length=walk_length,
+                                                    num_of_clusters=n_clusters,
+                                                    num_of_random_walks=n_walk)
+
                         create_clustering(paramters, i, j, cluster_membership)
 
 
-def create_clustering(parameters: ModelParamters, i: int, j: int,
+def create_clustering(parameters: ModelParameters, i: int, j: int,
                       cluster_membership: ClusterMembership):
     cluster_membership[j] = {}
     df = get_df(i, j, WeightMethod.NUM_OF_COMM)
-    """
-    # Create a DeepWalk model
-    deepwalk = DeepWalk(dimensions=2)
-    deepwalk.fit(G)
-
-    embedding = deepwalk.get_embedding()
-
-    # plt.scatter(embedding[:,0], embedding[:,1])
-    
-    """
     if parameters['embedding_method'] == EmbeddingMethod.WEIGHTED_RANDOM:
-        best_weighted_score = 0
-        best_p = 0
-        best_q = 0
-        best_walk_length = 0
-        best_vec_size = 0
+        # best_weighted_score = 0
+        # best_p = 0
+        # best_q = 0
+        # best_walk_length = 0
+        # best_vec_size = 0
         # Create a StellarGraph model
         G = get_stellar_graph(df)
 
         Ps = [0.5]
         Qs = [2.0]
-        vec_sizes = [128]
-
         for p in Ps:
             for q in Qs:
-                for vec_size in vec_sizes:
-                    model, embedding = get_embedding_info(
-                        G, parameters['walk_length'], p, q, vec_size)
+                model, embedding = get_embedding_info(
+                    G, parameters['walk_length'], p, q, parameters['vec_size'])
+                if parameters['clustering'] == ClusteringMethod.KMEDOIDS:
                     kmedoids = KMedoids(
                         n_clusters=parameters['num_of_clusters'], random_state=0).fit(embedding)
                     labels = kmedoids.labels_
@@ -102,7 +104,21 @@ def create_clustering(parameters: ModelParamters, i: int, j: int,
                     print("Sum of Squared Errors:", sse)
                     score = silhouette_score(embedding, labels)
                     print("Silhouette score: ", score)
+                    # not sure if i wannna return the score?
                     return score
+                elif parameters['clustering'] == ClusteringMethod.KMEANS:
+                    # TODO
+                    pass
+                elif parameters['clustering'] == ClusteringMethod.SPECTRAL:
+                    # TODO
+                    pass
+
+    elif parameters['embedding_method'] == EmbeddingMethod.DEEP_WALK:
+        deepwalk = DeepWalk(dimensions=2)
+        deepwalk.fit(G)
+        embedding = deepwalk.get_embedding()
+        # plt.scatter(embedding[:,0], embedding[:,1])
+
     # TODO: Check other clustering algorithms (e.g. Spectral Clustering, K-means, etc.)
     # Create a KMedoids model
 

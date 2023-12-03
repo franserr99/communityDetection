@@ -5,7 +5,8 @@ from karateclub.node_embedding.neighbourhood.deepwalk import DeepWalk
 # import matplotlib.pyplot as plt
 from sklearn_extra.cluster import KMedoids
 from sklearn.manifold import TSNE
-from sklearn.cluster import KMeans, SpectralClustering, DBSCAN, AgglomerativeClustering
+from sklearn.cluster import KMeans, SpectralClustering, DBSCAN, \
+    AgglomerativeClustering
 # from sklearn import preprocessing
 from stellargraph.data import BiasedRandomWalk
 from stellargraph import StellarDiGraph, StellarGraph
@@ -71,14 +72,23 @@ def main():
                                   ClusteringMethod.DBSCAN]
             # -1 -> 1 range for silhoutte score
             max_score = -1
+            best_shared_param = {}
+            best_addtl_param = {}
             for walk_length in walk_lengths:
                 for n_walk in num_of_random_walks:
                     for n_clusters in num_of_clusters:
-                        paramters = ModelParameters(walk_length=walk_length,
-                                                    num_of_clusters=n_clusters,
-                                                    num_of_random_walks=n_walk)
-
-                        create_clustering(paramters, i, j, cluster_membership)
+                        parameters = ModelParameters(walk_length=walk_length,
+                                                     num_of_clusters=n_clusters,
+                                                     num_of_random_walks=n_walk)
+                        all_addtl_params = create_clustering(
+                            parameters, i, j, cluster_membership)
+                        score = all_addtl_params['score']
+                        if score > max_score:
+                            best_addtl_param = parameters
+                            best_addtl_param = all_addtl_params
+            print("The best clustering we found was:")
+            print(best_shared_param)
+            print(best_addtl_param)
 
 
 def perform_kmediods(parameters: ModelParameters, embedding):
@@ -100,15 +110,55 @@ def perform_kmeans(parameters: ModelParameters, embedding):
     return kmeans, labels, sse, score
 
 
+def perform_spectral(parameters: ModelParameters, embedding):
+    spectral_clustering = SpectralClustering(
+        n_clusters=parameters['num_of_clusters'],
+        random_state=0).fit(embedding)
+    labels = spectral_clustering.labels_
+    # does not have an inertia field (not applicable?)
+    score = silhouette_score(embedding, labels)
+    return spectral_clustering, labels, score
+
+
+def perform_db_scan(parameters: ModelParameters, embedding):
+    eps = [0.3, 0.5, 0.7]
+    min_samples = [5, 10, 20, 100]
+    best_eps = 0
+    best_min_sample = 0
+    # find the best db clustering to compare against the
+    # rest for the set of param handed
+    best_db_score = 0
+    best_db_scan = None
+    for ep in eps:
+        for min_sample in min_samples:
+            dbscan = DBSCAN(
+                eps=ep, min_samples=min_sample).fit(embedding)
+            labels = dbscan.labels_
+            score = silhouette_score(embedding, labels)
+            if score > best_db_score:
+                best_db_score = score
+                # best_p = p
+                # best_q = q
+                best_eps = ep
+                best_min_sample = min_sample
+                best_db_scan = dbscan
+    return best_db_scan, best_db_score, best_eps, best_min_sample
+
+
 def create_clustering(parameters: ModelParameters, i: int, j: int,
                       cluster_membership: ClusterMembership):
     cluster_membership[j] = {}
     df = get_df(i, j, WeightMethod.NUM_OF_COMM)
+    best_embedding_method = None
+    all_addtl_params = {}
+    best_score = -1
     if parameters['embedding_method'] == EmbeddingMethod.WEIGHTED_RANDOM:
-        best_score = -1
+        best_embedding_method = EmbeddingMethod.WEIGHTED_RANDOM
+
         best_p = 0
         best_q = 0
         best_clustering_method = None
+        # best_clustering_parameters is mostly for agg clustering and db scan
         best_clustering_parameters = {}
         G = get_stellar_graph(df)
         Ps = [0.5]
@@ -127,77 +177,72 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
                         best_p = p
                         best_q = q
                         best_clustering_method = ClusteringMethod.KMEDOIDS
-                    return score
                 elif parameters['clustering'] == ClusteringMethod.KMEANS:
                     kmeans, labels, sse, score = perform_kmeans(parameters,
                                                                 embedding)
                     # cluster_centers = kmeans.cluster_centers_
-                    score = silhouette_score(embedding, labels)
                     if score > best_score:
                         best_score = score
                         best_p = p
                         best_q = q
                         best_clustering_method = ClusteringMethod.KMEANS
-                    return score
                 elif parameters['clustering'] == ClusteringMethod.SPECTRAL:
                     # it has an affinity field we can change
                     # 'nearest_neighbors' or 'rbf' or an affinity matrix
                     # (if we have time?)
-                    spectral_clustering = SpectralClustering(
-                        n_clusters=parameters['num_of_clusters'],
-                        random_state=0).fit(embedding)
-                    labels = spectral_clustering.labels_
-                    # does not have an inertia field (not applicable?)
-                    score = silhouette_score(embedding, labels)
+                    spectral_clustering, labels, score = perform_spectral(
+                        embedding, labels)
                     if score > best_score:
                         best_score = score
                         best_p = p
                         best_q = q
                         best_clustering_method = ClusteringMethod.SPECTRAL
-                    return score
                 elif (parameters['clustering'] == ClusteringMethod.DBSCAN):
-                    eps = [0.3, 0.5, 0.7]
-                    min_samples = [5, 10, 20, 100]
-                    best_eps = 0
-                    best_min_sample = 0
-                    for ep in eps:
-                        for min_sample in min_samples:
-                            dbscan = DBSCAN(
-                                eps=ep, min_samples=min_sample).fit(embedding)
-                            labels = dbscan.labels_
-                            score = silhouette_score(embedding, labels)
-                            if score > best_score:
-                                best_score = score
-                                best_p = p
-                                best_q = q
-                                best_eps = ep
-                                best_min_sample = min_sample
-                                best_clustering_method = ClusteringMethod.DBSCAN
-                elif (parameters['clustering'] == ClusteringMethod.AGGCLUSTERING):
-                    linkages = ['ward', 'average']
-                    best_linkage = ''
-                    for linkage in linkages:
-                        agg_cluster = AgglomerativeClustering(
-                            n_clusters=parameters['num_of_clusters'],
-                            linkage=linkage).fit(embedding)
-                        labels = agg_cluster.labels_
-                        score = silhouette_score()
-                        if score > best_score:
-                            best_score = score
-                            best_p = p
-                            best_q = q
-                            best_linkage = linkage
-                            best_clustering_method = ClusteringMethod.AGGCLUSTERING
-                            return score
+                    best_db_scan, best_db_score, best_eps, best_min_sample = \
+                        perform_db_scan(embedding, labels)
+                    if best_db_score > best_score:
+                        best_score = score
+                        best_p = p
+                        best_q = q
+                        best_clustering_method = ClusteringMethod.DBSCAN
+                        best_clustering_parameters = {
+                            'eps': best_eps, 'min_sample': best_min_sample}
+                elif (parameters['clustering'] ==
+                      ClusteringMethod.AGGCLUSTERING):
+                    # linkages = ['ward', 'average']
+                    # best_linkage = ''
+                    # for linkage in linkages:
+                    agg_cluster = AgglomerativeClustering(
+                        n_clusters=parameters['num_of_clusters']
+                    ).fit(embedding)
+                    labels = agg_cluster.labels_
+                    score = silhouette_score()
+                    if score > best_score:
+                        best_score = score
+                        best_p = p
+                        best_q = q
+                        # best_linkage = linkage
+                        best_clustering_method = ClusteringMethod.AGGCLUSTERING
         print("the best p and q we found was:", best_p, best_q)
+        all_addtl_params.update(best_clustering_parameters)
+        all_addtl_params.update({'p': best_p, 'q': best_q})
+        all_addtl_params.update({'clustering_method': best_clustering_method})
+        all_addtl_params.update({'embedding_method': best_embedding_method})
+        all_addtl_params.update({'score': best_score})
+
     elif parameters['embedding_method'] == EmbeddingMethod.DEEP_WALK:
         deepwalk = DeepWalk(dimensions=2)
         deepwalk.fit(G)
         embedding = deepwalk.get_embedding()
         # plt.scatter(embedding[:,0], embedding[:,1])
 
+        # that big if elif elif in the weighted one shows up here
+        # debug for the first part, then try to refactor it so that it can be a function
+        # it would make this part cleaner
+
     # TODO: Check other clustering algorithms (e.g. Spectral Clustering, K-means, etc.)
     # Create a KMedoids model
+    return all_addtl_params
 
 
 def get_embedding_info(G: Union[StellarGraph, StellarDiGraph], walk_length, p, q, vec_size):

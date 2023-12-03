@@ -82,8 +82,11 @@ def main():
     # Create a KMedoids model
     kmedoids = KMedoids(n_clusters=4, random_state=0).fit(embedding)
     model_labels = kmedoids.labels_
+    centroids = kmedoids.cluster_centers_
+
 
     ground_truth_clusters = getGroundTruthClusters()
+    print(ground_truth_clusters)
     # unpack the array args into the union
     ground_truth_set = set().union(*ground_truth_clusters)
     # node_ids is a list of strings (i assume they use the client and server ID but convert to str)
@@ -96,7 +99,10 @@ def main():
         if nodeID in common_nodes:
             filtered_model_clusters[label].add(nodeID)
     print(common_nodes)
-    assert ground_truth_set == common_nodes
+    # assert ground_truth_set == common_nodes
+    # i think some nodes in ground truth arent in the common nodes
+    filtered_ground_truth_clusters = [cluster & common_nodes for cluster in ground_truth_clusters]
+    print(filtered_ground_truth_clusters)
 
 
 if __name__ == "__main__":

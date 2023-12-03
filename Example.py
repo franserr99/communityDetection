@@ -1,5 +1,5 @@
 import pandas as pd
-# import numpy as np
+import numpy as np
 import networkx as nx
 from karateclub.node_embedding.neighbourhood.deepwalk import DeepWalk
 # import matplotlib.pyplot as plt
@@ -99,8 +99,13 @@ def main():
                                             cluster_membership)
                                         score = all_addtl_params['score']
                                         if score > max_score:
+                                            max_score = score
                                             best_shared_param = parameters
                                             best_addtl_param = all_addtl_params
+                                            print(
+                                                "The best found so far we found was:")
+                                            print(best_shared_param)
+                                            print(best_addtl_param)
             print("The best clustering we found was:")
             print(best_shared_param)
             print(best_addtl_param)
@@ -112,7 +117,13 @@ def perform_kmediods(parameters: ModelParameters, embedding):
         random_state=0).fit(embedding)
     labels = kmedoids.labels_
     sse = kmedoids.inertia_
-    score = silhouette_score(embedding, labels)
+    unique_labels = np.unique(labels)
+    if len(unique_labels) > 1:
+        # more than one cluster exists, calculate silhouette score
+        score = silhouette_score(embedding, labels)
+    else:
+        # only one cluster
+        score = -1
     return kmedoids, labels, sse, score
 
 
@@ -120,8 +131,14 @@ def perform_kmeans(parameters: ModelParameters, embedding):
     kmeans = KMeans(n_clusters=parameters['num_of_clusters'],
                     random_state=0).fit(embedding)
     labels = kmeans.labels_
+    unique_labels = np.unique(labels)
+    if len(unique_labels) > 1:
+        # more than one cluster exists, calculate silhouette score
+        score = silhouette_score(embedding, labels)
+    else:
+        # only one cluster
+        score = -1
     sse = kmeans.inertia_
-    score = silhouette_score(embedding, labels)
     return kmeans, labels, sse, score
 
 
@@ -130,14 +147,20 @@ def perform_spectral(parameters: ModelParameters, embedding):
         n_clusters=parameters['num_of_clusters'],
         random_state=0).fit(embedding)
     labels = spectral_clustering.labels_
+    unique_labels = np.unique(labels)
+    if len(unique_labels) > 1:
+        # more than one cluster exists, calculate silhouette score
+        score = silhouette_score(embedding, labels)
+    else:
+        # only one cluster
+        score = -1
     # does not have an inertia field (not applicable?)
-    score = silhouette_score(embedding, labels)
     return spectral_clustering, labels, score
 
 
 def perform_db_scan(parameters: ModelParameters, embedding):
-    eps = [0.3, 0.5, 0.7]
-    min_samples = [5, 10, 20, 100]
+    eps = [0.1, 0.2, 0.4]
+    min_samples = [5, 10, 20]
     best_eps = 0
     best_min_sample = 0
     # find the best db clustering to compare against the
@@ -149,7 +172,14 @@ def perform_db_scan(parameters: ModelParameters, embedding):
             dbscan = DBSCAN(
                 eps=ep, min_samples=min_sample).fit(embedding)
             labels = dbscan.labels_
-            score = silhouette_score(embedding, labels)
+            unique_labels = np.unique(labels)
+
+            if len(unique_labels) > 1:
+                # more than one cluster exists, calculate silhouette score
+                score = silhouette_score(embedding, labels)
+            else:
+                # only one cluster
+                score = -1
             if score > best_db_score:
                 best_db_score = score
                 # best_p = p
@@ -232,7 +262,13 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
                         n_clusters=parameters['num_of_clusters']
                     ).fit(embedding)
                     labels = agg_cluster.labels_
-                    score = silhouette_score(embedding, labels)
+                    unique_labels = np.unique(labels)
+                    if len(unique_labels) > 1:
+                        # more than one cluster exists, calculate silhouette score
+                        score = silhouette_score(embedding, labels)
+                    else:
+                        # only one cluster
+                        score = -1  
                     if score > best_score:
                         best_score = score
                         best_p = p

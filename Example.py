@@ -55,16 +55,20 @@ def main():
     for i in range(1):
         cluster_membership: ClusterMembership = {}
         for j in range(1):
-            # hyper-paramters (tuning on a per data set basis (best parameters for each graph))
-            # we can use the ground truth model as a validation set for some selection of parameters we choose
+            # hyper-paramters (tuning on a per data set basis
+            # (best parameters for each graph))
+            # we can use the ground truth model as a validation set for
+            # some selection of parameters we choose
             # and find some way to get a general set of "best parameters" for the domain/data set
             walk_lengths = [100]
-            num_of_random_walks = []
+            num_of_random_walks = [10]
+            vector_sizes = [128]
             # starting with larger intervals we can narrow down (idk the scale of # of clusters)
             num_of_clusters = [4, 8, 16, 20]
             # we need to tune the important params in each of these
+            # onky do weighted random for now
             embedding_methods = [
-                EmbeddingMethod.WEIGHTED_RANDOM, EmbeddingMethod.DEEP_WALK]
+                EmbeddingMethod.WEIGHTED_RANDOM]
             weight_methods = [WeightMethod.NUM_OF_COMM]
             clustering_methods = [ClusteringMethod.KMEANS,
                                   ClusteringMethod.KMEDOIDS,
@@ -77,15 +81,26 @@ def main():
             for walk_length in walk_lengths:
                 for n_walk in num_of_random_walks:
                     for n_clusters in num_of_clusters:
-                        parameters = ModelParameters(walk_length=walk_length,
-                                                     num_of_clusters=n_clusters,
-                                                     num_of_random_walks=n_walk)
-                        all_addtl_params = create_clustering(
-                            parameters, i, j, cluster_membership)
-                        score = all_addtl_params['score']
-                        if score > max_score:
-                            best_addtl_param = parameters
-                            best_addtl_param = all_addtl_params
+                        for embedding_method in embedding_methods:
+                            for clustering_method in clustering_methods:
+                                for vect_size in vector_sizes:
+                                    for weight_method in weight_methods:
+                                        parameters = ModelParameters(
+                                            walk_length=walk_length,
+                                            num_of_clusters=n_clusters,
+                                            num_of_walks=n_walk,
+                                            vec_size=vect_size,
+                                            embedding=embedding_method,
+                                            clustering=clustering_method,
+                                            weight=weight_method
+                                        )
+                                        all_addtl_params = create_clustering(
+                                            parameters, i, j,
+                                            cluster_membership)
+                                        score = all_addtl_params['score']
+                                        if score > max_score:
+                                            best_shared_param = parameters
+                                            best_addtl_param = all_addtl_params
             print("The best clustering we found was:")
             print(best_shared_param)
             print(best_addtl_param)
@@ -147,12 +162,13 @@ def perform_db_scan(parameters: ModelParameters, embedding):
 
 def create_clustering(parameters: ModelParameters, i: int, j: int,
                       cluster_membership: ClusterMembership):
+
     cluster_membership[j] = {}
-    df = get_df(i, j, WeightMethod.NUM_OF_COMM)
+    df = get_df(i, j, parameters['weight'])
     best_embedding_method = None
     all_addtl_params = {}
     best_score = -1
-    if parameters['embedding_method'] == EmbeddingMethod.WEIGHTED_RANDOM:
+    if parameters['embedding'] == EmbeddingMethod.WEIGHTED_RANDOM:
         best_embedding_method = EmbeddingMethod.WEIGHTED_RANDOM
 
         best_p = 0
@@ -191,7 +207,7 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
                     # 'nearest_neighbors' or 'rbf' or an affinity matrix
                     # (if we have time?)
                     spectral_clustering, labels, score = perform_spectral(
-                        embedding, labels)
+                        parameters, embedding)
                     if score > best_score:
                         best_score = score
                         best_p = p
@@ -199,7 +215,7 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
                         best_clustering_method = ClusteringMethod.SPECTRAL
                 elif (parameters['clustering'] == ClusteringMethod.DBSCAN):
                     best_db_scan, best_db_score, best_eps, best_min_sample = \
-                        perform_db_scan(embedding, labels)
+                        perform_db_scan(parameters, embedding)
                     if best_db_score > best_score:
                         best_score = score
                         best_p = p
@@ -216,7 +232,7 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
                         n_clusters=parameters['num_of_clusters']
                     ).fit(embedding)
                     labels = agg_cluster.labels_
-                    score = silhouette_score()
+                    score = silhouette_score(embedding, labels)
                     if score > best_score:
                         best_score = score
                         best_p = p
@@ -230,17 +246,20 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
         all_addtl_params.update({'embedding_method': best_embedding_method})
         all_addtl_params.update({'score': best_score})
 
-    elif parameters['embedding_method'] == EmbeddingMethod.DEEP_WALK:
+    elif parameters['embedding'] == EmbeddingMethod.DEEP_WALK:
         deepwalk = DeepWalk(dimensions=2)
         deepwalk.fit(G)
         embedding = deepwalk.get_embedding()
+
         # plt.scatter(embedding[:,0], embedding[:,1])
 
         # that big if elif elif in the weighted one shows up here
-        # debug for the first part, then try to refactor it so that it can be a function
+        # debug for the first part
+        #  then try to refactor it so that it can be a function
         # it would make this part cleaner
 
-    # TODO: Check other clustering algorithms (e.g. Spectral Clustering, K-means, etc.)
+    # TODO: Check other clustering algorithms
+    # (e.g. Spectral Clustering, K-means, etc.)
     # Create a KMedoids model
     return all_addtl_params
 
@@ -258,15 +277,20 @@ def get_embedding_info(G: Union[StellarGraph, StellarDiGraph], walk_length, p, q
     )  # numpy.ndarray of size number of nodes times embeddings dimensionality
     embedding = TSNE(n_components=2).fit_transform(
         node_embeddings)
-    # when i refactored i only returned model and embedding because you can access the rest thru them
+    # when i refactored i only returned model and embedding because
+    # you can access the rest thru them
     return model, embedding
 
 
 def get_df(graph: int, day: int, method: WeightMethod):
-    df = pd.read_csv(f'graphs/g{graph+1}_{day+1}.csv', sep="\t", header=None, names=[
-        "graph", "src", "dst", "weight"], dtype={"graph": str, "src": int, "dst": int, "weight": str})
+    df = pd.read_csv(f'graphs/g{graph+1}_{day+1}.csv',
+                     sep="\t", header=None,
+                     names=["graph", "src", "dst", "weight"],
+                     dtype={"graph": str, "src": int,
+                            "dst": int, "weight": str})
     df.sort_index(inplace=True)
-    # TODO: Check other weight options (e.g.  total number of packets, weighted sum with packet size, etc.)
+    # TODO: Check other weight options (e.g.  total number of packets,
+    #  weighted sum with packet size, etc.)
     if method == WeightMethod.NUM_OF_COMM:
         # Set weights of graph
         # Count the number of communications between the two hosts

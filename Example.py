@@ -1,19 +1,16 @@
 import pandas as pd
-import numpy as np
+# import numpy as np
 import networkx as nx
 from karateclub.node_embedding.neighbourhood.deepwalk import DeepWalk
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from sklearn_extra.cluster import KMedoids
 from sklearn.manifold import TSNE
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import accuracy_score
-from sklearn.metrics.pairwise import pairwise_distances
-from sklearn import preprocessing
+from sklearn.cluster import KMeans, SpectralClustering, DBSCAN, AgglomerativeClustering
+# from sklearn import preprocessing
 from stellargraph.data import BiasedRandomWalk
 from stellargraph import StellarDiGraph, StellarGraph
 from gensim.models import Word2Vec
-import community
+# import community
 from typing import TypedDict, Dict, List, Union
 from sklearn.metrics import silhouette_score
 from enum import Enum
@@ -38,6 +35,8 @@ class ClusteringMethod(Enum):
     KMEDOIDS = "kmedoids"
     KMEANS = "kmeans"
     SPECTRAL = "spectral"
+    DBSCAN = "dbscan"
+    AGGCLUSTERING = "agglomerative_clustering"
 
 
 class ModelParameters(TypedDict):
@@ -62,9 +61,14 @@ def main():
             num_of_random_walks = []
             # starting with larger intervals we can narrow down (idk the scale of # of clusters)
             num_of_clusters = [4, 8, 16, 20]
+            # we need to tune the important params in each of these
             embedding_methods = [
                 EmbeddingMethod.WEIGHTED_RANDOM, EmbeddingMethod.DEEP_WALK]
             weight_methods = [WeightMethod.NUM_OF_COMM]
+            clustering_methods = [ClusteringMethod.KMEANS,
+                                  ClusteringMethod.KMEDOIDS,
+                                  ClusteringMethod.SPECTRAL,
+                                  ClusteringMethod.DBSCAN]
             # -1 -> 1 range for silhoutte score
             max_score = -1
             for walk_length in walk_lengths:
@@ -77,42 +81,115 @@ def main():
                         create_clustering(paramters, i, j, cluster_membership)
 
 
+def perform_kmediods(parameters: ModelParameters, embedding):
+    kmedoids = KMedoids(
+        n_clusters=parameters['num_of_clusters'],
+        random_state=0).fit(embedding)
+    labels = kmedoids.labels_
+    sse = kmedoids.inertia_
+    score = silhouette_score(embedding, labels)
+    return kmedoids, labels, sse, score
+
+
+def perform_kmeans(parameters: ModelParameters, embedding):
+    kmeans = KMeans(n_clusters=parameters['num_of_clusters'],
+                    random_state=0).fit(embedding)
+    labels = kmeans.labels_
+    sse = kmeans.inertia_
+    score = silhouette_score(embedding, labels)
+    return kmeans, labels, sse, score
+
+
 def create_clustering(parameters: ModelParameters, i: int, j: int,
                       cluster_membership: ClusterMembership):
     cluster_membership[j] = {}
     df = get_df(i, j, WeightMethod.NUM_OF_COMM)
     if parameters['embedding_method'] == EmbeddingMethod.WEIGHTED_RANDOM:
-        # best_weighted_score = 0
-        # best_p = 0
-        # best_q = 0
-        # best_walk_length = 0
-        # best_vec_size = 0
-        # Create a StellarGraph model
+        best_score = -1
+        best_p = 0
+        best_q = 0
+        best_clustering_method = None
+        best_clustering_parameters = {}
         G = get_stellar_graph(df)
-
         Ps = [0.5]
         Qs = [2.0]
         for p in Ps:
             for q in Qs:
                 model, embedding = get_embedding_info(
                     G, parameters['walk_length'], p, q, parameters['vec_size'])
+                # create functions for the repetitive stuff
                 if parameters['clustering'] == ClusteringMethod.KMEDOIDS:
-                    kmedoids = KMedoids(
-                        n_clusters=parameters['num_of_clusters'], random_state=0).fit(embedding)
-                    labels = kmedoids.labels_
-                    sse = kmedoids.inertia_
-                    print("Sum of Squared Errors:", sse)
-                    score = silhouette_score(embedding, labels)
-                    print("Silhouette score: ", score)
+                    kmedoids, labels, sse, score = perform_kmediods(
+                        parameters, embedding)
                     # not sure if i wannna return the score?
+                    if score > best_score:
+                        best_score = score
+                        best_p = p
+                        best_q = q
+                        best_clustering_method = ClusteringMethod.KMEDOIDS
                     return score
                 elif parameters['clustering'] == ClusteringMethod.KMEANS:
-                    # TODO
-                    pass
+                    kmeans, labels, sse, score = perform_kmeans(parameters,
+                                                                embedding)
+                    # cluster_centers = kmeans.cluster_centers_
+                    score = silhouette_score(embedding, labels)
+                    if score > best_score:
+                        best_score = score
+                        best_p = p
+                        best_q = q
+                        best_clustering_method = ClusteringMethod.KMEANS
+                    return score
                 elif parameters['clustering'] == ClusteringMethod.SPECTRAL:
-                    # TODO
-                    pass
-
+                    # it has an affinity field we can change
+                    # 'nearest_neighbors' or 'rbf' or an affinity matrix
+                    # (if we have time?)
+                    spectral_clustering = SpectralClustering(
+                        n_clusters=parameters['num_of_clusters'],
+                        random_state=0).fit(embedding)
+                    labels = spectral_clustering.labels_
+                    # does not have an inertia field (not applicable?)
+                    score = silhouette_score(embedding, labels)
+                    if score > best_score:
+                        best_score = score
+                        best_p = p
+                        best_q = q
+                        best_clustering_method = ClusteringMethod.SPECTRAL
+                    return score
+                elif (parameters['clustering'] == ClusteringMethod.DBSCAN):
+                    eps = [0.3, 0.5, 0.7]
+                    min_samples = [5, 10, 20, 100]
+                    best_eps = 0
+                    best_min_sample = 0
+                    for ep in eps:
+                        for min_sample in min_samples:
+                            dbscan = DBSCAN(
+                                eps=ep, min_samples=min_sample).fit(embedding)
+                            labels = dbscan.labels_
+                            score = silhouette_score(embedding, labels)
+                            if score > best_score:
+                                best_score = score
+                                best_p = p
+                                best_q = q
+                                best_eps = ep
+                                best_min_sample = min_sample
+                                best_clustering_method = ClusteringMethod.DBSCAN
+                elif (parameters['clustering'] == ClusteringMethod.AGGCLUSTERING):
+                    linkages = ['ward', 'average']
+                    best_linkage = ''
+                    for linkage in linkages:
+                        agg_cluster = AgglomerativeClustering(
+                            n_clusters=parameters['num_of_clusters'],
+                            linkage=linkage).fit(embedding)
+                        labels = agg_cluster.labels_
+                        score = silhouette_score()
+                        if score > best_score:
+                            best_score = score
+                            best_p = p
+                            best_q = q
+                            best_linkage = linkage
+                            best_clustering_method = ClusteringMethod.AGGCLUSTERING
+                            return score
+        print("the best p and q we found was:", best_p, best_q)
     elif parameters['embedding_method'] == EmbeddingMethod.DEEP_WALK:
         deepwalk = DeepWalk(dimensions=2)
         deepwalk.fit(G)
@@ -136,6 +213,7 @@ def get_embedding_info(G: Union[StellarGraph, StellarDiGraph], walk_length, p, q
     )  # numpy.ndarray of size number of nodes times embeddings dimensionality
     embedding = TSNE(n_components=2).fit_transform(
         node_embeddings)
+    # when i refactored i only returned model and embedding because you can access the rest thru them
     return model, embedding
 
 
@@ -165,19 +243,6 @@ def get_stellar_graph(df: pd.DataFrame):
 if __name__ == "__main__":
     main()
 
-# # Compute accuracy (I think...?)
-    # aligned_labels = [y[int(node_id)] for node_id in node_ids]
-    # # [y[node] for node in range(len(y))]
-    # accuracy = accuracy_score(aligned_labels, labels, normalize=True)
-# # Supposed True Communities
-# y = community.best_partition(G)  # True Labels from Louvain Algorithm
- # for index, cluster in enumerate(labels):
-    #     nodeID = int(node_ids[index])
-    #     if cluster not in cluster_membership[j]:
-    #         cluster_membership[j][cluster] = []
-    #     cluster_membership[j][cluster].append(nodeID)
-
-# Display Clustering (Uncecessary)
 """ unique_labels = set(labels)
 colors = [
     plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))

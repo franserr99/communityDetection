@@ -51,10 +51,6 @@ class TestBipartiteBasic:
 
     def test_is_bipartite_node_set(self):
         G = nx.path_graph(4)
-
-        with pytest.raises(nx.AmbiguousSolution):
-            bipartite.is_bipartite_node_set(G, [1, 1, 2, 3])
-
         assert bipartite.is_bipartite_node_set(G, [0, 2])
         assert bipartite.is_bipartite_node_set(G, [1, 3])
         assert not bipartite.is_bipartite_node_set(G, [1, 2])
@@ -67,7 +63,7 @@ class TestBipartiteBasic:
     def test_bipartite_density(self):
         G = nx.path_graph(5)
         X, Y = bipartite.sets(G)
-        density = len(list(G.edges())) / (len(X) * len(Y))
+        density = float(len(list(G.edges()))) / (len(X) * len(Y))
         assert bipartite.density(G, X) == density
         D = nx.DiGraph(G.edges())
         assert bipartite.density(D, X) == density / 2.0

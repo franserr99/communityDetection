@@ -68,7 +68,7 @@ def main():
             # we need to tune the important params in each of these
             # onky do weighted random for now
             embedding_methods = [
-                EmbeddingMethod.WEIGHTED_RANDOM]
+                EmbeddingMethod.WEIGHTED_RANDOM, EmbeddingMethod.DEEP_WALK]
             weight_methods = [WeightMethod.NUM_OF_COMM]
             clustering_methods = [ClusteringMethod.KMEANS,
                                   ClusteringMethod.KMEDOIDS,
@@ -201,6 +201,11 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
     best_embedding_method = None
     all_addtl_params = {}
     best_score = -1
+    best_clustering_method = None
+    
+    # best_clustering_parameters is mostly for agg clustering and db scan
+    best_clustering_parameters = {}
+
     if parameters['embedding'] == EmbeddingMethod.WEIGHTED_RANDOM:
         best_embedding_method = EmbeddingMethod.WEIGHTED_RANDOM
 
@@ -286,9 +291,73 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
         all_addtl_params.update({'score': best_score})
 
     elif parameters['embedding'] == EmbeddingMethod.DEEP_WALK:
+
+        # Get networkx graph from dataframe
+        G = G = nx.from_pandas_edgelist(df, "src", "dst", edge_attr="weight", create_using=nx.Graph())
+
         deepwalk = DeepWalk(dimensions=2)
         deepwalk.fit(G)
         embedding = deepwalk.get_embedding()
+        
+        if parameters['clustering'] == ClusteringMethod.KMEDOIDS:
+            kmedoids, labels, sse, score = perform_kmediods(
+                parameters, embedding)
+            # not sure if i wannna return the score?
+            if score > best_score:
+                best_score = score
+                best_clustering_method = ClusteringMethod.KMEDOIDS
+                
+        elif parameters['clustering'] == ClusteringMethod.KMEANS:
+            kmeans, labels, sse, score = perform_kmeans(parameters,
+                                                        embedding)
+            # cluster_centers = kmeans.cluster_centers_
+            if score > best_score:
+                best_score = score
+                best_clustering_method = ClusteringMethod.KMEANS
+
+        elif parameters['clustering'] == ClusteringMethod.SPECTRAL:
+            # it has an affinity field we can change
+            # 'nearest_neighbors' or 'rbf' or an affinity matrix
+            # (if we have time?)
+            spectral_clustering, labels, score = perform_spectral(
+                parameters, embedding)
+            if score > best_score:
+                best_score = score
+                best_clustering_method = ClusteringMethod.SPECTRAL
+
+        elif (parameters['clustering'] == ClusteringMethod.DBSCAN):
+            best_db_scan, best_db_score, best_eps, best_min_sample = \
+                perform_db_scan(parameters, embedding)
+            if best_db_score > best_score:
+                best_score = best_db_score
+                best_clustering_method = ClusteringMethod.DBSCAN
+                best_clustering_parameters = {
+                    'eps': best_eps, 'min_sample': best_min_sample}
+
+        elif (parameters['clustering'] == ClusteringMethod.AGGCLUSTERING):
+            # linkages = ['ward', 'average']
+            # best_linkage = ''
+            # for linkage in linkages:
+            agg_cluster = AgglomerativeClustering(
+                n_clusters=parameters['num_of_clusters']
+            ).fit(embedding)
+            labels = agg_cluster.labels_
+            unique_labels = np.unique(labels)
+            if len(unique_labels) > 1:
+                # more than one cluster exists, calculate silhouette score
+                score = silhouette_score(embedding, labels)
+            else:
+                # only one cluster
+                score = -1
+            if score > best_score:
+                best_score = score
+                # best_linkage = linkage
+                best_clustering_method = ClusteringMethod.AGGCLUSTERING
+
+    all_addtl_params.update(best_clustering_parameters)
+    all_addtl_params.update({'clustering_method': best_clustering_method})
+    all_addtl_params.update({'embedding_method': best_embedding_method})
+    all_addtl_params.update({'score': best_score})
 
         # plt.scatter(embedding[:,0], embedding[:,1])
 

@@ -53,6 +53,7 @@ def mycielskian(G, iterations=1):
 
     """
 
+    n = G.number_of_nodes()
     M = nx.convert_node_labels_to_integers(G)
 
     for i in range(iterations):

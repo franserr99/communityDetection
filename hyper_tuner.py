@@ -15,7 +15,7 @@ from gensim.models import Word2Vec
 from typing import TypedDict, Dict, List, Union
 from sklearn.metrics import silhouette_score
 from enum import Enum
-
+import os
 
 class ClusterMembership(TypedDict):
     day: Dict[int, Dict[int, List[int]]]
@@ -52,35 +52,45 @@ class ModelParameters(TypedDict):
 
 def main():
     # switch this to iterate all graphs for now keep to 1
-    for i in range(1):
-        cluster_membership: ClusterMembership = {}
-        for j in range(1):
-            # hyper-paramters (tuning on a per data set basis
-            # (best parameters for each graph))
-            # we can use the ground truth model as a validation set for
-            # some selection of parameters we choose
-            # and find some way to get a general set of "best parameters" for the domain/data set
-            walk_lengths = [100]
-            num_of_random_walks = [10]
-            vector_sizes = [128]
-            # starting with larger intervals we can narrow down (idk the scale of # of clusters)
-            num_of_clusters = [4, 8, 12]
-            # we need to tune the important params in each of these
-            # onky do weighted random for now
-            embedding_methods = [
+    directory = "graphs"
+    counter = 0
+
+    files = ["graphs/g1_1.csv","graphs/g2_1.csv","graphs/g3_1.csv"]
+
+    for file in files:
+    #for file in os.listdir(directory):
+        #file = os.path.join(directory, file)
+        print(file)
+        cluster_membership: ClusterMembership = {}            # hyper-paramters (tuning on a per data set basis
+        # (best parameters for each graph))
+        # we can use the ground truth model as a validation set for
+        # some selection of parameters we choose
+        # and find some way to get a general set of "best parameters" for the domain/data set
+        walk_lengths = [100]
+        num_of_random_walks = [10]
+        vector_sizes = [128]
+        # starting with larger intervals we can narrow down (idk the scale of # of clusters)
+        num_of_clusters = [4, 8, 12]
+        # we need to tune the important params in each of these
+        # onky do weighted random for now
+        embedding_methods = [
                 EmbeddingMethod.WEIGHTED_RANDOM, EmbeddingMethod.DEEP_WALK]
-            weight_methods = [WeightMethod.NUM_OF_COMM]
-            clustering_methods = [ClusteringMethod.KMEANS,
+        weight_methods = [WeightMethod.NUM_OF_COMM]
+        clustering_methods = [ClusteringMethod.KMEANS,
                                   ClusteringMethod.KMEDOIDS,
                                   ClusteringMethod.DBSCAN]
-            # -1 -> 1 range for silhoutte score
-            max_score = -1
-            best_shared_param = {}
-            best_addtl_param = {}
+        # -1 -> 1 range for silhoutte score
+        max_score = -1
+        best_shared_param = {}
+        best_addtl_param = {}
 
+        results = pd.DataFrame(columns=['graph', 'day', 'walk_length', 'num_of_walks', 'vec_size',
+                                        'num_of_clusters', 'embedding', 'weight', 'clustering', 'score'])
+        # for each graph
+        for i in range(1):
             for weight_method in weight_methods:
                 # i think moving this upwards should make it faster?
-                df = get_df(i, j, weight_method)
+                df = get_df(file, weight_method)
                 for walk_length in walk_lengths:
                     for n_walk in num_of_random_walks:
                         for n_clusters in num_of_clusters:
@@ -98,20 +108,27 @@ def main():
                                             weight=weight_method
                                         )
                                         all_addtl_params = create_clustering(
-                                            parameters, i, j,
+                                            parameters, counter,
                                             cluster_membership, df)
                                         score = all_addtl_params['score']
                                         if score > max_score:
                                             max_score = score
                                             best_shared_param = parameters
                                             best_addtl_param = all_addtl_params
-                                            print(
-                                                "The best found so far we found was:")
-                                            print(best_shared_param)
-                                            print(best_addtl_param)
-            print("The best clustering we found was:")
-            print(best_shared_param)
-            print(best_addtl_param)
+                                            
+            # add to results
+            graph = file.split('/')[-1]
+            graph = graph.split('.')[0]
+            graph,day = graph.split('_')[0],graph.split('_')[1]
+
+            results = results.append({'graph': graph, 'day': day, 'walk_length': best_shared_param['walk_length'], 'num_of_walks': best_shared_param['num_of_walks'], 'vec_size': best_shared_param['vec_size'],
+                                      'num_of_clusters': best_shared_param['num_of_clusters'], 'embedding': best_shared_param['embedding'], 'weight': best_shared_param['weight'], 'clustering': best_shared_param['clustering'], 'score': best_addtl_param['score']}, ignore_index=True)
+
+            results.to_csv('results.csv', index=False)
+        counter += 1
+
+    # save results
+    results.to_csv('results.csv', index=False)
 
 
 def perform_kmediods(parameters: ModelParameters, embedding):
@@ -193,7 +210,7 @@ def perform_db_scan(parameters: ModelParameters, embedding):
     return best_db_scan, best_db_score, best_eps, best_min_sample
 
 
-def create_clustering(parameters: ModelParameters, i: int, j: int,
+def create_clustering(parameters: ModelParameters, j: int,
                       cluster_membership: ClusterMembership, df: pd.DataFrame):
 
     cluster_membership[j] = {}
@@ -215,8 +232,8 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
         # best_clustering_parameters is mostly for agg clustering and db scan
         best_clustering_parameters = {}
         G = get_stellar_graph(df)
-        Ps = [0.5]
-        Qs = [2.0]
+        Ps = [0.5,0.4,0.3,0.2,0.1]
+        Qs = [2.0,1.5,1.0,0.5,0.1]
         for p in Ps:
             for q in Qs:
                 model, embedding = get_embedding_info(
@@ -283,7 +300,7 @@ def create_clustering(parameters: ModelParameters, i: int, j: int,
                         best_q = q
                         # best_linkage = linkage
                         best_clustering_method = ClusteringMethod.AGGCLUSTERING
-        print("the best p and q we found was:", best_p, best_q)
+        # print("the best p and q we found was:", best_p, best_q)
         all_addtl_params.update(best_clustering_parameters)
         all_addtl_params.update({'p': best_p, 'q': best_q})
         all_addtl_params.update({'clustering_method': best_clustering_method})
@@ -390,8 +407,8 @@ def get_embedding_info(G: Union[StellarGraph, StellarDiGraph], walk_length, p, q
     return model, embedding
 
 
-def get_df(graph: int, day: int, method: WeightMethod):
-    df = pd.read_csv(f'graphs/g{graph+1}_{day+1}.csv',
+def get_df(file: str, method: WeightMethod):
+    df = pd.read_csv(file,
                      sep="\t", header=None,
                      names=["graph", "src", "dst", "weight"],
                      dtype={"graph": str, "src": int,

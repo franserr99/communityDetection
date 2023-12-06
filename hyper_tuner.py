@@ -115,7 +115,7 @@ def main():
                                             max_score = score
                                             best_shared_param = parameters
                                             best_addtl_param = all_addtl_params
-                                            
+
             # add to results
             graph = file.split('/')[-1]
             graph = graph.split('.')[0]
@@ -219,7 +219,7 @@ def create_clustering(parameters: ModelParameters, j: int,
     all_addtl_params = {}
     best_score = -1
     best_clustering_method = None
-    
+
     # best_clustering_parameters is mostly for agg clustering and db scan
     best_clustering_parameters = {}
 
@@ -315,7 +315,7 @@ def create_clustering(parameters: ModelParameters, j: int,
         deepwalk = DeepWalk(dimensions=2)
         deepwalk.fit(G)
         embedding = deepwalk.get_embedding()
-        
+
         if parameters['clustering'] == ClusteringMethod.KMEDOIDS:
             kmedoids, labels, sse, score = perform_kmediods(
                 parameters, embedding)
@@ -323,7 +323,7 @@ def create_clustering(parameters: ModelParameters, j: int,
             if score > best_score:
                 best_score = score
                 best_clustering_method = ClusteringMethod.KMEDOIDS
-                
+
         elif parameters['clustering'] == ClusteringMethod.KMEANS:
             kmeans, labels, sse, score = perform_kmeans(parameters,
                                                         embedding)
@@ -406,6 +406,12 @@ def get_embedding_info(G: Union[StellarGraph, StellarDiGraph], walk_length, p, q
     # you can access the rest thru them
     return model, embedding
 
+def count_communications(x: str) -> int:
+    return len(x.split(","))
+
+# Define separate functions for each weight method
+def calculate_weight_num_of_comm(x: str) -> int:
+    return count_communications(x)
 
 def get_df(file: str, method: WeightMethod):
     df = pd.read_csv(file,
@@ -419,9 +425,10 @@ def get_df(file: str, method: WeightMethod):
     if method == WeightMethod.NUM_OF_COMM:
         # Set weights of graph
         # Count the number of communications between the two hosts
-        df["weight"] = df["weight"].map(lambda x: len(x.split(",")))
-    return df
+    #    df["weight"] = df["weight"].map(lambda x: len(x.split(",")))
 
+            df["weight"] = df["weight"].map(calculate_weight_num_of_comm)
+    return df
 
 def get_stellar_graph(df: pd.DataFrame):
     # Create a graph from the dataframe

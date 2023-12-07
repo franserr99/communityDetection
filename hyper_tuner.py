@@ -16,6 +16,10 @@ from typing import TypedDict, Dict, List, Union
 from sklearn.metrics import silhouette_score
 from enum import Enum
 import os
+from biweight import avgWeights, medianWeight
+from logWeight import np, edge
+from connectionWeight import edgeConnections
+
 
 class ClusterMembership(TypedDict):
     day: Dict[int, Dict[int, List[int]]]
@@ -25,7 +29,9 @@ class WeightMethod(Enum):
     NUM_OF_COMM = "num_of_comm"
     # TODO :add enums for ryans work +
     #       their implementation in code or selection from file w it already computed
-
+    BIWEIGHT = "biweight"
+    LOG_WEIGHT = "log_weight"
+    CONNECTION_WEIGHT = "connection_weight"
 
 class EmbeddingMethod(Enum):
     WEIGHTED_RANDOM = "weighted_random"
@@ -75,7 +81,7 @@ def main():
         # onky do weighted random for now
         embedding_methods = [
                 EmbeddingMethod.WEIGHTED_RANDOM, EmbeddingMethod.DEEP_WALK]
-        weight_methods = [WeightMethod.NUM_OF_COMM]
+        weight_methods = [WeightMethod.NUM_OF_COMM, WeightMethod.BIWEIGHT, WeightMethod.LOG_WEIGHT,WeightMethod.CONNECTION_WEIGHT]
         clustering_methods = [ClusteringMethod.KMEANS,
                                   ClusteringMethod.KMEDOIDS,
                                   ClusteringMethod.DBSCAN]
@@ -90,7 +96,7 @@ def main():
         for i in range(1):
             for weight_method in weight_methods:
                 # i think moving this upwards should make it faster?
-                df = get_df(file, weight_method)
+                df = get_df(file, weight_method.value)
                 for walk_length in walk_lengths:
                     for n_walk in num_of_random_walks:
                         for n_clusters in num_of_clusters:
@@ -413,6 +419,19 @@ def count_communications(x: str) -> int:
 def calculate_weight_num_of_comm(x: str) -> int:
     return count_communications(x)
 
+def calculate_biweight_weight(edge: tuple) -> float:
+    weight = avgWeights[edge]
+    biweight = (weight - medianWeight) / (9 * medianWeight)
+    return biweight
+
+def calculate_log_weight_weight(edge: tuple) -> float:
+    count = edge[edge]
+    log_weight = 0.5 * np.log(count + 1)
+    return log_weight
+
+def calculate_connection_weight_weight(edge: tuple) -> int:
+    return edgeConnections[edge]
+
 def get_df(file: str, method: WeightMethod):
     df = pd.read_csv(file,
                      sep="\t", header=None,
@@ -425,9 +444,18 @@ def get_df(file: str, method: WeightMethod):
     if method == WeightMethod.NUM_OF_COMM:
         # Set weights of graph
         # Count the number of communications between the two hosts
-    #    df["weight"] = df["weight"].map(lambda x: len(x.split(",")))
+        df["weight"] = df["weight"].map(lambda x: len(x.split(",")))
+    elif method == WeightMethod.BIWEIGHT:
+        df["weight"] = df.apply(lambda row: calculate_biweight_weight(
+            (row["graph"], row["src"], row["dst"])), axis=1)
+    elif method == WeightMethod.LOG_WEIGHT:
+        df["weight"] = df.apply(lambda row: calculate_log_weight_weight(
+            (row["graph"], row["src"], row["dst"])), axis=1)
+    elif method == WeightMethod.CONNECTION_WEIGHT:
+        df["weight"] = df.apply(lambda row: calculate_connection_weight_weight(
+            (row["graph"], row["src"], row["dst"])), axis=1)
 
-            df["weight"] = df["weight"].map(calculate_weight_num_of_comm)
+#            df["weight"] = df["weight"].map(calculate_weight_num_of_comm)
     return df
 
 def get_stellar_graph(df: pd.DataFrame):

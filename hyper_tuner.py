@@ -16,10 +16,12 @@ from typing import TypedDict, Dict, List, Union
 from sklearn.metrics import silhouette_score
 from enum import Enum
 import os
+
+"""
 from biweight import avgWeights, medianWeight
 from logWeight import np, edge
 from connectionWeight import edgeConnections
-
+"""
 
 class ClusterMembership(TypedDict):
     day: Dict[int, Dict[int, List[int]]]
@@ -61,7 +63,7 @@ def main():
     directory = "graphs"
     counter = 0
 
-    files = ["graphs/g1_1.csv","graphs/g2_1.csv","graphs/g3_1.csv"]
+    files = ["graphs/g" +str(i) + "_1.csv" for i in [1,13,12,20,17,14,7,18,16,11,19]]
 
     for file in files:
     #for file in os.listdir(directory):
@@ -76,12 +78,13 @@ def main():
         num_of_random_walks = [10]
         vector_sizes = [128]
         # starting with larger intervals we can narrow down (idk the scale of # of clusters)
-        num_of_clusters = [4, 8, 12]
+        num_of_clusters = [4, 8]
         # we need to tune the important params in each of these
         # onky do weighted random for now
         embedding_methods = [
                 EmbeddingMethod.WEIGHTED_RANDOM, EmbeddingMethod.DEEP_WALK]
-        weight_methods = [WeightMethod.NUM_OF_COMM, WeightMethod.BIWEIGHT, WeightMethod.LOG_WEIGHT,WeightMethod.CONNECTION_WEIGHT]
+        weight_methods = [WeightMethod.NUM_OF_COMM]
+
         clustering_methods = [ClusteringMethod.KMEANS,
                                   ClusteringMethod.KMEDOIDS,
                                   ClusteringMethod.DBSCAN]
@@ -90,13 +93,12 @@ def main():
         best_shared_param = {}
         best_addtl_param = {}
 
-        results = pd.DataFrame(columns=['graph', 'day', 'walk_length', 'num_of_walks', 'vec_size',
-                                        'num_of_clusters', 'embedding', 'weight', 'clustering', 'score'])
         # for each graph
         for i in range(1):
             for weight_method in weight_methods:
                 # i think moving this upwards should make it faster?
-                df = get_df(file, weight_method.value)
+                df = get_df(file, WeightMethod.NUM_OF_COMM)
+                print(df.head())
                 for walk_length in walk_lengths:
                     for n_walk in num_of_random_walks:
                         for n_clusters in num_of_clusters:
@@ -126,15 +128,25 @@ def main():
             graph = file.split('/')[-1]
             graph = graph.split('.')[0]
             graph,day = graph.split('_')[0],graph.split('_')[1]
+            
+            # output results to results.txt
+            output = open("results.txt", "a")
+            output.write("Graph: " + graph + "\n")
+            output.write("Day: " + day + "\n")
+            output.write("Walk Length: " + str(best_shared_param['walk_length']) + "\n")
+            output.write("Number of Walks: " + str(best_shared_param['num_of_walks']) + "\n")
+            output.write("Vector Size: " + str(best_shared_param['vec_size']) + "\n")
+            output.write("Number of Clusters: " + str(best_shared_param['num_of_clusters']) + "\n")
+            output.write("Embedding Method: " + str(best_shared_param['embedding']) + "\n")
+            if best_addtl_param['embedding_method'] == EmbeddingMethod.WEIGHTED_RANDOM:
+                output.write("P: " + str(best_addtl_param['p']) + "\n")
+                output.write("Q: " + str(best_addtl_param['q']) + "\n")
+            output.write("Weight Method: " + str(best_shared_param['weight']) + "\n")
+            output.write("Clustering Method: " + str(best_shared_param['clustering']) + "\n")
+            output.write("Score: " + str(best_addtl_param['score']) + "\n")
+            output.write("\n")
+            output.close()
 
-            results = results.append({'graph': graph, 'day': day, 'walk_length': best_shared_param['walk_length'], 'num_of_walks': best_shared_param['num_of_walks'], 'vec_size': best_shared_param['vec_size'],
-                                      'num_of_clusters': best_shared_param['num_of_clusters'], 'embedding': best_shared_param['embedding'], 'weight': best_shared_param['weight'], 'clustering': best_shared_param['clustering'], 'score': best_addtl_param['score']}, ignore_index=True)
-
-            results.to_csv('results.csv', index=False)
-        counter += 1
-
-    # save results
-    results.to_csv('results.csv', index=False)
 
 
 def perform_kmediods(parameters: ModelParameters, embedding):
@@ -158,6 +170,7 @@ def perform_kmeans(parameters: ModelParameters, embedding):
                     random_state=0).fit(embedding)
     labels = kmeans.labels_
     unique_labels = np.unique(labels)
+    print(unique_labels)
     if len(unique_labels) > 1:
         # more than one cluster exists, calculate silhouette score
         score = silhouette_score(embedding, labels)
@@ -238,8 +251,8 @@ def create_clustering(parameters: ModelParameters, j: int,
         # best_clustering_parameters is mostly for agg clustering and db scan
         best_clustering_parameters = {}
         G = get_stellar_graph(df)
-        Ps = [0.5,0.4,0.3,0.2,0.1]
-        Qs = [2.0,1.5,1.0,0.5,0.1]
+        Ps = [0.5]
+        Qs = [2.0]
         for p in Ps:
             for q in Qs:
                 model, embedding = get_embedding_info(
@@ -406,7 +419,7 @@ def get_embedding_info(G: Union[StellarGraph, StellarDiGraph], walk_length, p, q
     node_embeddings = (
         model.wv.vectors
     )  # numpy.ndarray of size number of nodes times embeddings dimensionality
-    embedding = TSNE(n_components=2).fit_transform(
+    embedding = TSNE(n_components=2, perplexity=5).fit_transform(
         node_embeddings)
     # when i refactored i only returned model and embedding because
     # you can access the rest thru them
@@ -445,6 +458,7 @@ def get_df(file: str, method: WeightMethod):
         # Set weights of graph
         # Count the number of communications between the two hosts
         df["weight"] = df["weight"].map(lambda x: len(x.split(",")))
+    
     elif method == WeightMethod.BIWEIGHT:
         df["weight"] = df.apply(lambda row: calculate_biweight_weight(
             (row["graph"], row["src"], row["dst"])), axis=1)

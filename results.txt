@@ -1,0 +1,121 @@
+Graph: g1
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 8
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.7118627
+
+Graph: g13
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.KMEANS
+Score: 0.69672614
+
+Graph: g12
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 8
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.68136775
+
+Graph: g20
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.464905
+
+Graph: g17
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 8
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.49750367
+
+Graph: g14
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6119952
+
+Graph: g7
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5942679
+
+Graph: g18
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 8
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5995639
+
+Graph: g16
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.KMEANS
+Score: 0.46038452
+
+Graph: g11
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.59149444
+
+Graph: g19
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6378301
+

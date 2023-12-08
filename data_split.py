@@ -3,6 +3,7 @@ import os
 
 # Read in the data
 
+"""
 for i in range(1,5):
     if i == 1:
         iter_max = 6
@@ -28,7 +29,7 @@ for i in range(1,5):
 
             df_g.to_csv('graphs/' + str(graph) + "_" + str(i) + '.csv',mode='a', sep="\t", header=None, index=False)
 
-""" directory = "graphs/"
+directory = "graphs/"
 for file in os.listdir(directory):
     file = os.path.join(directory, file)
     df = pd.read_csv(file, sep="\t", header=None, names=["graph","src", "dst", "weight"], dtype={"graph": str, "src": float, "dst": float, "weight": str})

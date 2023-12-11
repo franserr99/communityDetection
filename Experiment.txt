@@ -1,0 +1,869 @@
+Graph: graphs\g10
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.47511944
+
+Graph: graphs\g10
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.4601183
+
+Graph: graphs\g10
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.48837227
+
+Graph: graphs\g10
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.46335477
+
+Graph: graphs\g11
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6283395
+
+Graph: graphs\g11
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.4867211
+
+Graph: graphs\g11
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.61125
+
+Graph: graphs\g11
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.72529787
+
+Graph: graphs\g12
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6610948
+
+Graph: graphs\g12
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5320228
+
+Graph: graphs\g12
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6008872
+
+Graph: graphs\g12
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6622983
+
+Graph: graphs\g13
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.65769917
+
+Graph: graphs\g13
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.680358
+
+Graph: graphs\g13
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5732061
+
+Graph: graphs\g13
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.63685
+
+Graph: graphs\g14
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.56276
+
+Graph: graphs\g14
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.525388
+
+Graph: graphs\g14
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.49730894
+
+Graph: graphs\g14
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.48134527
+
+Graph: graphs\g15
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.76139545
+
+Graph: graphs\g15
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6891938
+
+Graph: graphs\g15
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.74491763
+
+Graph: graphs\g15
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.7748232
+
+Graph: graphs\g16
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.34793818
+
+Graph: graphs\g16
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.51845634
+
+Graph: graphs\g16
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.4846397
+
+Graph: graphs\g16
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6036746
+
+Graph: graphs\g17
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5331772
+
+Graph: graphs\g17
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.66895735
+
+Graph: graphs\g17
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.71189284
+
+Graph: graphs\g17
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.68068916
+
+Graph: graphs\g18
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5817028
+
+Graph: graphs\g18
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.7032932
+
+Graph: graphs\g18
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6766206
+
+Graph: graphs\g18
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6859071
+
+Graph: graphs\g19
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6163511
+
+Graph: graphs\g19
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.43772033
+
+Graph: graphs\g19
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.570389
+
+Graph: graphs\g19
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.41782388
+
+Graph: graphs\g1
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.61556745
+
+Graph: graphs\g1
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.58565176
+
+Graph: graphs\g1
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.42466795
+
+Graph: graphs\g1
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.47071669
+
+Graph: graphs\g20
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.46490535
+
+Graph: graphs\g20
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5118316
+
+Graph: graphs\g20
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5232006
+
+Graph: graphs\g20
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.583078
+
+Graph: graphs\g2
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5432991
+
+Graph: graphs\g2
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5953821
+
+Graph: graphs\g2
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6734304
+
+Graph: g3
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5769086
+
+Graph: g3
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.67454666
+
+Graph: g3
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.7125297
+
+Graph: g3
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6178154
+
+Graph: g4
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.74416363
+
+Graph: g4
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.75440556
+
+Graph: g4
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.74749005
+
+Graph: g4
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.80155504
+
+Graph: g5
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.5832465
+
+Graph: g5
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.65157795
+
+Graph: g5
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.60929775
+
+Graph: g5
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.7309729
+
+Graph: g6
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.73200977
+
+Graph: g6
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.70648086
+
+Graph: g6
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.76097155
+
+Graph: g6
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.73984116
+
+Graph: g7
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.38431236
+
+Graph: g7
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.49089637
+
+Graph: g7
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.4090177
+
+Graph: g7
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.46261063
+
+Graph: g8
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.73728734
+
+Graph: g8
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.7128201
+
+Graph: g8
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.7158986
+
+Graph: g8
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.72808295
+
+Graph: g9
+Day: 1
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.61178094
+
+Graph: g9
+Day: 2
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.6395239
+
+Graph: g9
+Day: 3
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.64847237
+
+Graph: g9
+Day: 4
+Walk Length: 100
+Number of Walks: 10
+Vector Size: 128
+Number of Clusters: 4
+Embedding Method: EmbeddingMethod.DEEP_WALK
+Weight Method: WeightMethod.NUM_OF_COMM
+Clustering Method: ClusteringMethod.DBSCAN
+Score: 0.65789527
+

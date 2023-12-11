@@ -61,12 +61,13 @@ class ModelParameters(TypedDict):
 def main():
     # switch this to iterate all graphs for now keep to 1
     directory = "graphs"
-    counter = 0
 
-    files = ["graphs/g" +str(i) + "_1.csv" for i in [1,13,12,20,17,14,7,18,16,11,19]]
+
+    files = ["graphs/g" +str(i) + "_" + str(j) + ".csv" for i in [3,4,5,6,7,8,9] for j in range(1,5)]
 
     for file in files:
     #for file in os.listdir(directory):
+        counter = 0
         #file = os.path.join(directory, file)
         print(file)
         cluster_membership: ClusterMembership = {}            # hyper-paramters (tuning on a per data set basis
@@ -78,16 +79,13 @@ def main():
         num_of_random_walks = [10]
         vector_sizes = [128]
         # starting with larger intervals we can narrow down (idk the scale of # of clusters)
-        num_of_clusters = [4, 8]
+        num_of_clusters = [4]
         # we need to tune the important params in each of these
         # onky do weighted random for now
-        embedding_methods = [
-                EmbeddingMethod.WEIGHTED_RANDOM, EmbeddingMethod.DEEP_WALK]
+        embedding_methods = [EmbeddingMethod.DEEP_WALK]
         weight_methods = [WeightMethod.NUM_OF_COMM]
 
-        clustering_methods = [ClusteringMethod.KMEANS,
-                                  ClusteringMethod.KMEDOIDS,
-                                  ClusteringMethod.DBSCAN]
+        clustering_methods = [ClusteringMethod.DBSCAN]
         # -1 -> 1 range for silhoutte score
         max_score = -1
         best_shared_param = {}
@@ -130,7 +128,7 @@ def main():
             graph,day = graph.split('_')[0],graph.split('_')[1]
             
             # output results to results.txt
-            output = open("results.txt", "a")
+            output = open("Experiment.txt", "a")
             output.write("Graph: " + graph + "\n")
             output.write("Day: " + day + "\n")
             output.write("Walk Length: " + str(best_shared_param['walk_length']) + "\n")
